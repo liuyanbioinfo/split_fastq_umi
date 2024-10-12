@@ -26,7 +26,7 @@ cmake --build .
 
 2. **运行程序**
 
-使用以下命令运行程序，使用实例数据：
+使用以下命令运行程序，使用示例数据：
 
 ```bash
 cd testdata
@@ -46,14 +46,14 @@ cd testdata
 
 
 4. **文件格式要求**
-    - UMI分组文件格式：
+UMI分组文件格式：
 ```plain
 <UMI分组> <UMI>
 Group1 ACGTACGT
 Group2 TGCTAGCT
 ```
 
-    - 样本配置文件格式：
+样本配置文件格式：
 ```plain
 <FC> <样本ID> <UMI> <样本名称>
 FC001 Sample01 Group1,Group2 Sample01,Sample02
