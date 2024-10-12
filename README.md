@@ -1,4 +1,4 @@
-# SPLITE_FASTQ_UMI
+# SPLIT_FASTQ_UMI
 ## 项目简介
 该项目旨在处理带有条形码（UMI）标记的双端测序数据（FASTQ格式）文件。通过双端UMI匹配样本名称，将读取的双端read（Read1和Read2）按照样本及UMI对应关系分类，输出到对应样本的结果文件。项目通过无锁的SPSC（Single Producer Single Consumer）队列实现多线程读写，提升了处理速度。
 
