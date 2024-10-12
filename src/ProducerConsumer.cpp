@@ -101,7 +101,7 @@ void producer(SPSCQueue<ReadPair>& queue,
         std::string sample1 = samplematch1.sample;
         std::string sample2 = samplematch2.sample;
         bool corrected1 = samplematch1.corrected;
-        bool corrected2 = samplematch1.corrected;
+        bool corrected2 = samplematch2.corrected;
         // 校正barcode
         if (corrected1){
             read_pair.read1_line2 = samplematch1.barcode + read_pair.read1_line2.substr(8);
@@ -119,8 +119,10 @@ void producer(SPSCQueue<ReadPair>& queue,
         // 只有当 READ1 和 READ2 都匹配到同一个样本时，才认为是正确的读对
         if (sample1 != "Unknown" && sample1 == sample2) {
             read_pair.sample_name = sample1;
+            stats.sample_counts[read_pair.sample_name]++;
             if (corrected1 || corrected2){
-                read_pair.corrected = true;    
+                read_pair.corrected = true;
+                stats.corrected_counts[read_pair.sample_name]++;
             }
 
             // 推入队列
@@ -152,7 +154,6 @@ void consumer(SPSCQueue<ReadPair>& queue,
               const std::string& output_dir, 
               std::unordered_map<std::string, gzFile>& sample_to_file_R1, 
               std::unordered_map<std::string, gzFile>& sample_to_file_R2, 
-              Statistics& stats, 
               std::atomic<bool>& finished) {
     size_t totalWritten = 0;
 
@@ -160,8 +161,8 @@ void consumer(SPSCQueue<ReadPair>& queue,
     while (true) {
         if (queue.pop(read_pair)) {
             // 构建输出文件名
-            std::string filename_R1 = output_dir + "/" + read_pair.sample_name + ".R1.fastq.gz";
-            std::string filename_R2 = output_dir + "/" + read_pair.sample_name + ".R2.fastq.gz";
+            std::string filename_R1 = output_dir + "/" + read_pair.sample_name + ".R1.fq.gz";
+            std::string filename_R2 = output_dir + "/" + read_pair.sample_name + ".R2.fq.gz";
 
             // 打开或获取输出文件句柄
             if (sample_to_file_R1.find(read_pair.sample_name) == sample_to_file_R1.end()) {
@@ -216,11 +217,6 @@ void consumer(SPSCQueue<ReadPair>& queue,
                 continue;
             }
 
-            // 更新统计
-            stats.sample_counts[read_pair.sample_name]++;
-            if (read_pair.corrected){
-                stats.corrected_counts[read_pair.sample_name]++;
-            }
             totalWritten++;
         } else {
             if (finished.load(std::memory_order_acquire) && !queue.pop(read_pair)) {

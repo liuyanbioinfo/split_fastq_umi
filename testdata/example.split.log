@@ -1,7 +1,6 @@
-生产者完成，文件1: example.R1.fq.gz, 文件2: example.R2.fq.gz, Total Reads: 10000, Unknown Reads: 7010
 Total: 10000
-Unknown: 7010	Percentage: 70.1
+Unknown: 7010	Percentage: 70.100
 #Sample	Count	Percentage	CorrectedCount	CorrectedPercentage	CorrectedPercentageAll
-GS0926R7_DX_FFPE20	2990	29.90	1	0.03	0.01
-[2024-10-11 16:04:32] split_fastq -G barcodes.example.conf -S sample.example.conf -i example.R1.fq.gz -I example.R2.fq.gz -O ./
-[Version: 1.0.0, Time used: 1 seconds]
+GS0926R7_DX_FFPE20	2990	29.900	1	0.033	0.010
+[2024-10-12 10:57:56]  ../build/bin/split_fastq_umi -G barcodes.example.conf -S sample.example.conf -i example.R1.fq.gz -I example.R2.fq.gz -o ./ -p 7
+[Version: 1.0.0, Time used: 0 seconds]

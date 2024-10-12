@@ -24,7 +24,6 @@ void consumer(SPSCQueue<ReadPair>& queue,
               const std::string& output_dir, 
               std::unordered_map<std::string, gzFile>& sample_to_file_R1, 
               std::unordered_map<std::string, gzFile>& sample_to_file_R2, 
-              Statistics& stats, 
               std::atomic<bool>& finished);
 
 #endif // PRODUCERCONSUMER_H

@@ -87,7 +87,7 @@ int main(int argc, char* argv[]) {
     std::unordered_map<std::string, gzFile> sample_to_file_R2;
 
     // 启动消费者线程
-    std::thread consumer_thread(consumer, std::ref(queue), output_dir, std::ref(sample_to_file_R1), std::ref(sample_to_file_R2), std::ref(stats), std::ref(finished));
+    std::thread consumer_thread(consumer, std::ref(queue), output_dir, std::ref(sample_to_file_R1), std::ref(sample_to_file_R2), std::ref(finished));
 
     // 等待线程完成
     producer_thread.join();
@@ -99,8 +99,8 @@ int main(int argc, char* argv[]) {
     std::strftime(time_buf, sizeof(time_buf), "%Y-%m-%d %H:%M:%S", std::localtime(&t2));
 
     // 构建命令行字符串
-    std::string cmd_line = "split_fastq";
-    for (int i = 1; i < argc; ++i) {
+    std::string cmd_line = "";
+    for (int i = 0; i < argc; ++i) {
         cmd_line += " ";
         cmd_line += argv[i];
     }
