@@ -12,8 +12,7 @@
 ## 使用说明
 1. **编译项目**
 
-项目使用 `conan`与`cmake` 进行构建。首先进入项目的根目录，执行以下命令进行编译：
-
+项目使用 `conan`与`cmake` 进行构建。首先克隆并进入项目的根目录，执行以下命令：
 ```bash
 git clone git@github.com:liuyanbioinfo/split_fastq_umi.git
 cd split_fastq_umi
@@ -35,11 +34,7 @@ cmake --build .
 
 例如：
 
-```plain
-bash
-
-
-复制代码
+```bash
 ./build/fastq_matcher -b data/barcodes.txt -s data/samples.txt -fq1 input_R1.fq.gz -fq2 input_R2.fq.gz -o output_dir
 ```
 
@@ -51,12 +46,12 @@ bash
 | `-s` | 样本配置文件路径 |
 | `-fq1` | 输入的 FASTQ Read1 文件 |
 | `-fq2` | 输入的 FASTQ Read2 文件 |
+| `-p` | UMI容错位置 |
 | `-o` | 输出目录路径 |
 
 
 4. **文件格式要求**
     - 条形码组文件格式：
-
 ```plain
 <条形码组> <条形码>
 Group1 ACGTACGT
@@ -64,7 +59,6 @@ Group2 TGCTAGCT
 ```
 
     - 样本配置文件格式：
-
 ```plain
 <FC> <样本ID> <条形码组> <样本名称>
 FC001 Sample01 Group1,Group2 Sample01,Sample02
