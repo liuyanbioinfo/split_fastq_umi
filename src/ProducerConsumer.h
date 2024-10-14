@@ -15,7 +15,9 @@
 void producer(SPSCQueue<ReadPair>& queue, 
               const std::string& fq1_input, 
               const std::string& fq2_input, 
-              const BarcodeMatcher& matcher, 
+              const BarcodeMatcher& matcher,
+              const int barcode_length,
+              const bool fixMGI,  
               Statistics& stats, 
               std::atomic<bool>& finished);
 

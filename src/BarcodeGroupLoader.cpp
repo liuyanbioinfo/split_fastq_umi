@@ -21,6 +21,7 @@ bool BarcodeGroupLoader::load(const std::string& filepath) {
             continue;
         }
         group_to_barcodes[group].push_back(barcode);
+        barcode_length = barcode.length();
     }
     infile.close();
     return true;
@@ -30,3 +31,6 @@ const std::unordered_map<std::string, std::vector<std::string>>& BarcodeGroupLoa
     return group_to_barcodes;
 }
 
+const int& BarcodeGroupLoader::get_barcode_length() const {
+    return barcode_length;
+}

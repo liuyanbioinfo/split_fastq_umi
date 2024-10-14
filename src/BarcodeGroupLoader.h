@@ -8,14 +8,19 @@
 
 class BarcodeGroupLoader {
 public:
-    // 加载条形码组文件
+    // 加载UMI分组文件
     bool load(const std::string& filepath);
 
-    // 获取所有条形码组及其条形码
+    // 获取所有UMI分组及其UMI条形码
     const std::unordered_map<std::string, std::vector<std::string>>& get_group_barcodes() const;
+
+    // 获取UMI长度
+    const int& get_barcode_length() const;
 
 private:
     std::unordered_map<std::string, std::vector<std::string>> group_to_barcodes;
+    int barcode_length;
+
 };
 
 #endif // BARCODEGROUPLOADER_H

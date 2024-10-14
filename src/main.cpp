@@ -36,6 +36,7 @@ int main(int argc, char* argv[]) {
     cmd.add<std::string>("fastq2",'I', "Input fastq2.gz file", true, "");
     cmd.add<std::string>("output_dir",'o', "Output directory", true, "");
     cmd.add<std::string>("p_pos",'p', "Mismatch tolerant position in barcode (1-8), 1-based, default=7, -1 to disable", false, "7");
+    cmd.add("disable_fix_mgi_id",0,"the MGI FASTQ ID format is not compatible with many BAM operation tools, default is fix_mgi_id, enable this option to diable the fix.");
 
     cmd.parse_check(argc, argv);
 
@@ -52,6 +53,7 @@ int main(int argc, char* argv[]) {
     std::set<int> allowed_positions;
     std::string p_str = cmd.get<std::string>("p_pos");
     allowed_positions = parse_allowed_positions(p_str);
+    bool fixMGI = !cmd.exist("disable_fix_mgi_id");
 
     std::time_t t1 = std::time(nullptr);
     // 加载配置文件
@@ -60,6 +62,7 @@ int main(int argc, char* argv[]) {
         cerr << barcode_group_file << " Error" << std::endl;
         return 1;
     }
+    const int barcode_length = bg_loader.get_barcode_length();
 
     SampleConfigLoader sc_loader;
     if (!sc_loader.load(sample_config_file)) {
@@ -80,7 +83,7 @@ int main(int argc, char* argv[]) {
     std::atomic<bool> finished(false);
 
     // 启动生产者线程
-    std::thread producer_thread(producer, std::ref(queue), fastq1_file, fastq2_file, std::ref(matcher), std::ref(stats), std::ref(finished));
+    std::thread producer_thread(producer, std::ref(queue), fastq1_file, fastq2_file, std::ref(matcher), barcode_length, fixMGI, std::ref(stats), std::ref(finished));
 
     // 创建映射样本名到文件句柄的映射
     std::unordered_map<std::string, gzFile> sample_to_file_R1;

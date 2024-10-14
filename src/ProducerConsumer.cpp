@@ -8,7 +8,9 @@
 void producer(SPSCQueue<ReadPair>& queue, 
               const std::string& fq1_input, 
               const std::string& fq2_input, 
-              const BarcodeMatcher& matcher, 
+              const BarcodeMatcher& matcher,
+              const int barcode_length,
+              const bool fixMGI, 
               Statistics& stats, 
               std::atomic<bool>& finished) {
     gzFile infile1 = gzopen(fq1_input.c_str(), "rb");
@@ -23,8 +25,8 @@ void producer(SPSCQueue<ReadPair>& queue,
     }
 
     // 设置更大的缓冲区
-    gzbuffer(infile1, 3 << 20); // 10MB
-    gzbuffer(infile2, 3 << 20); // 10MB
+    gzbuffer(infile1, 3 << 20); // 3MB
+    gzbuffer(infile2, 3 << 20); // 3MB
 
     char buffer1[1024];
     char buffer2[1024];
@@ -43,9 +45,9 @@ void producer(SPSCQueue<ReadPair>& queue,
                 break;
             }
             std::string line(buffer1);
-            if (!line.empty() && line.back() == '\n') {
-                line.pop_back();
-            }
+            //if (!line.empty() && line.back() == '\n') {
+            //    line.pop_back();
+            //}
             switch(i) {
                 case 0: read_pair.read1_line1 = line; break;
                 case 1: read_pair.read1_line2 = line; break;
@@ -63,9 +65,9 @@ void producer(SPSCQueue<ReadPair>& queue,
                 break;
             }
             std::string line(buffer2);
-            if (!line.empty() && line.back() == '\n') {
-                line.pop_back();
-            }
+            //if (!line.empty() && line.back() == '\n') {
+            //    line.pop_back();
+            //}
             switch(i) {
                 case 0: read_pair.read2_line1 = line; break;
                 case 1: read_pair.read2_line2 = line; break;
@@ -77,25 +79,19 @@ void producer(SPSCQueue<ReadPair>& queue,
 
         // 提取 UMI 和条形码
         std::string barcode1, barcode2;
-        if (read_pair.read1_line2.length() >= 8) {
-            barcode1 = read_pair.read1_line2.substr(0, 8);
-            //read_pair.read1_line2 = read_pair.read1_line2.substr(8);
+        if (read_pair.read1_line2.length() >= barcode_length) {
+            barcode1 = read_pair.read1_line2.substr(0, barcode_length);
         } else {
             barcode1 = read_pair.read1_line2;
-            //read_pair.read1_line2 = "";
         }
 
-        if (read_pair.read2_line2.length() >= 8) {
-            barcode2 = read_pair.read2_line2.substr(0, 8);
-            //read_pair.read2_line2 = read_pair.read2_line2.substr(8);
+        if (read_pair.read2_line2.length() >= barcode_length) {
+            barcode2 = read_pair.read2_line2.substr(0, barcode_length);
         } else {
             barcode2 = read_pair.read2_line2;
-            //read_pair.read2_line2 = "";
         }
 
-        // 进行条形码匹配
-        //std::string sample1 = matcher.match(barcode1);
-        //std::string sample2 = matcher.match(barcode2);
+        // 进行UMI匹配
         SampleMatch samplematch1 = matcher.match(barcode1);
         SampleMatch samplematch2 = matcher.match(barcode2);
         std::string sample1 = samplematch1.sample;
@@ -104,16 +100,16 @@ void producer(SPSCQueue<ReadPair>& queue,
         bool corrected2 = samplematch2.corrected;
         // 校正barcode
         if (corrected1){
-            read_pair.read1_line2 = samplematch1.barcode + read_pair.read1_line2.substr(8);
+            read_pair.read1_line2 = samplematch1.barcode + read_pair.read1_line2.substr(barcode_length);
         }
         if (corrected2){
-            read_pair.read2_line2 = samplematch2.barcode + read_pair.read2_line2.substr(8);
+            read_pair.read2_line2 = samplematch2.barcode + read_pair.read2_line2.substr(barcode_length);
         }
 
         // BGI /1 /2 SUFFIX FIX
-        if (read_pair.read1_line1.substr(read_pair.read1_line1.length() - 2) == "/1" && read_pair.read2_line1.substr(read_pair.read2_line1.length() - 2) == "/2"){
-            read_pair.read1_line1.erase(read_pair.read1_line1.length() - 2);
-            read_pair.read2_line1.erase(read_pair.read2_line1.length() - 2);
+        if (fixMGI && read_pair.read1_line1.length() >3 && read_pair.read2_line1.length() >3 && read_pair.read1_line1.substr(read_pair.read1_line1.length() - 3) == "/1\n" && read_pair.read2_line1.substr(read_pair.read2_line1.length() - 3) == "/2\n"){
+            read_pair.read1_line1.erase(read_pair.read1_line1.length() - 3, 2);
+            read_pair.read2_line1.erase(read_pair.read2_line1.length() - 3, 2);
         }
 
         // 只有当 READ1 和 READ2 都匹配到同一个样本时，才认为是正确的读对
@@ -172,7 +168,7 @@ void consumer(SPSCQueue<ReadPair>& queue,
                     continue;
                 }
                 // 设置更大的缓冲区
-                gzbuffer(outfile_R1, 3 << 20); // 10MB
+                gzbuffer(outfile_R1, 3 << 20); // 3MB
                 // 设置压缩级别为最快
                 if (gzsetparams(outfile_R1, Z_BEST_SPEED, Z_DEFAULT_STRATEGY) != Z_OK) {
                     std::cerr << "无法设置压缩参数: " << filename_R1 << std::endl;
@@ -187,7 +183,7 @@ void consumer(SPSCQueue<ReadPair>& queue,
                     continue;
                 }
                 // 设置更大的缓冲区
-                gzbuffer(outfile_R2, 3 << 20); // 10MB
+                gzbuffer(outfile_R2, 3 << 20); // 3MB
                 // 设置压缩级别为最快
                 if (gzsetparams(outfile_R2, Z_BEST_SPEED, Z_DEFAULT_STRATEGY) != Z_OK) {
                     std::cerr << "无法设置压缩参数: " << filename_R2 << std::endl;
@@ -200,19 +196,19 @@ void consumer(SPSCQueue<ReadPair>& queue,
             gzFile outfile_R2 = sample_to_file_R2[read_pair.sample_name];
 
             // 写入 READ1 的四行
-            if (gzputs(outfile_R1, (read_pair.read1_line1 + "\n").c_str()) == -1 ||
-                gzputs(outfile_R1, (read_pair.read1_line2 + "\n").c_str()) == -1 ||
-                gzputs(outfile_R1, (read_pair.read1_line3 + "\n").c_str()) == -1 ||
-                gzputs(outfile_R1, (read_pair.read1_line4 + "\n").c_str()) == -1) {
+            if (gzputs(outfile_R1, (read_pair.read1_line1).c_str()) == -1 ||
+                gzputs(outfile_R1, (read_pair.read1_line2).c_str()) == -1 ||
+                gzputs(outfile_R1, (read_pair.read1_line3).c_str()) == -1 ||
+                gzputs(outfile_R1, (read_pair.read1_line4).c_str()) == -1) {
                 std::cerr << "写入 READ1 到文件失败，样本: " << read_pair.sample_name << std::endl;
                 continue;
             }
 
             // 写入 READ2 的四行
-            if (gzputs(outfile_R2, (read_pair.read2_line1 + "\n").c_str()) == -1 ||
-                gzputs(outfile_R2, (read_pair.read2_line2 + "\n").c_str()) == -1 ||
-                gzputs(outfile_R2, (read_pair.read2_line3 + "\n").c_str()) == -1 ||
-                gzputs(outfile_R2, (read_pair.read2_line4 + "\n").c_str()) == -1) {
+            if (gzputs(outfile_R2, (read_pair.read2_line1).c_str()) == -1 ||
+                gzputs(outfile_R2, (read_pair.read2_line2).c_str()) == -1 ||
+                gzputs(outfile_R2, (read_pair.read2_line3).c_str()) == -1 ||
+                gzputs(outfile_R2, (read_pair.read2_line4).c_str()) == -1) {
                 std::cerr << "写入 READ2 到文件失败，样本: " << read_pair.sample_name << std::endl;
                 continue;
             }

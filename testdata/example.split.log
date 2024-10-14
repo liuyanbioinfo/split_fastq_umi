@@ -2,5 +2,5 @@ Total: 10000
 Unknown: 7010	Percentage: 70.100
 #Sample	Count	Percentage	CorrectedCount	CorrectedPercentage	CorrectedPercentageAll
 GS0926R7_DX_FFPE20	2990	29.900	1	0.033	0.010
-[2024-10-12 11:07:01]  ../build/bin/split_fastq_umi -G barcodes.example.conf -S sample.example.conf -i example.R1.fq.gz -I example.R2.fq.gz -o ./ -p 7
+[2024-10-14 11:53:15]  ../build/bin/split_fastq_umi -G barcodes.example.conf -S sample.example.conf -i example.R1.fq.gz -I example.R2.fq.gz -o ./ -p 7
 [Version: 1.0.0, Time used: 0 seconds]
