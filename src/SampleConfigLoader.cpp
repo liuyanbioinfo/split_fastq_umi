@@ -1,4 +1,3 @@
-// src/SampleConfigLoader.cpp
 #include "SampleConfigLoader.h"
 #include <fstream>
 #include <sstream>

@@ -1,4 +1,3 @@
-// include/SPSCQueue.h
 #ifndef SPSCQUEUE_H
 #define SPSCQUEUE_H
 

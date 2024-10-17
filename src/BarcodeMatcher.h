@@ -1,4 +1,3 @@
-// include/BarcodeMatcher.h
 #ifndef BARCODEMATCHER_H
 #define BARCODEMATCHER_H
 

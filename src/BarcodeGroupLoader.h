@@ -1,4 +1,3 @@
-// include/BarcodeGroupLoader.h
 #ifndef BARCODEGROUPLOADER_H
 #define BARCODEGROUPLOADER_H
 

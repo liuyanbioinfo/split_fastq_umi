@@ -1,4 +1,3 @@
-// src/BarcodeGroupLoader.cpp
 #include "BarcodeGroupLoader.h"
 #include <fstream>
 #include <sstream>

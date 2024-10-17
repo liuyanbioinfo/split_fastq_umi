@@ -1,4 +1,3 @@
-// src/BarcodeMatcher.cpp
 #include "BarcodeMatcher.h"
 #include "Utils.h"
 

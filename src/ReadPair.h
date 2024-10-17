@@ -1,4 +1,3 @@
-// include/ReadPair.h
 #ifndef READPAIR_H
 #define READPAIR_H
 

@@ -1,4 +1,3 @@
-// include/SampleConfigLoader.h
 #ifndef SAMPLECONFIGLOADER_H
 #define SAMPLECONFIGLOADER_H
 
