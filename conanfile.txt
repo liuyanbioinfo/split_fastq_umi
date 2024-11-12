@@ -1,0 +1,8 @@
+[requires]
+zlib/[>=1.0]
+libdeflate/1.21
+
+[generators]
+CMakeDeps
+CMakeToolchain
+

@@ -1,0 +1,6 @@
+Total: 0
+Unknown: 0	Percentage: 0.000
+#Sample	Count	Percentage	CorrectedCount	CorrectedPercentage	CorrectedPercentageAll
+empty_out	0	0.000	0	0.000	0.000
+[2024-11-12 15:59:09]  ../bin/split_fastq_umi -G barcodes.empty.conf -S sample.empty.conf -i empty_1.fq.gz -I empty_2.fq.gz -o ./ -p 7
+[Version: 1.2.0, Time used: 0 seconds]
