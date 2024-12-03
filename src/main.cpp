@@ -108,8 +108,9 @@ int main(int argc, char* argv[]) {
     // 构建命令行字符串
     std::string cmd_line = "";
     for (int i = 0; i < argc; ++i) {
-        cmd_line += " ";
+        // cmd_line += " ";
         cmd_line += argv[i];
+        cmd_line += " ";
     }
 
     // 输出统计信息到标准输出（可通过重定向保存到日志文件）
@@ -138,7 +139,7 @@ int main(int argc, char* argv[]) {
     }
 
     std::cout << "[" << time_buf << "] " << cmd_line << "\n";
-    std::cout << "[Version: "<< VERSION ", Time used: " << (t2)-t1  << " seconds]\n";
+    std::cout << "[" << time_buf << "] " << "Version: "<< VERSION ", Time used: " << (t2)-t1  << " seconds\n";
 
     return 0;
 }

@@ -133,9 +133,9 @@ void producer(SPSCQueue<ReadPair>& queue,
     stats.total_reads += totalReads;
     stats.unknown_reads += unknownReads;
 
-    std::cerr << "生产者完成，文件1: " << fq1_input << ", 文件2: " << fq2_input 
-              << ", Total Reads: " << totalReads 
-              << ", Unknown Reads: " << unknownReads << std::endl;
+    // std::cerr << "生产者完成，文件1: " << fq1_input << ", 文件2: " << fq2_input 
+    //          << ", Total Reads: " << totalReads 
+    //          << ", Unknown Reads: " << unknownReads << std::endl;
 
     finished.store(true, std::memory_order_release);
 }
@@ -195,6 +195,6 @@ void consumer(SPSCQueue<ReadPair>& queue,
     }
 
     // 关闭所有输出文件, 无需手动flush, Writer析构函数会自动调用
-    std::cerr << "消费者完成，Total Written Read Pairs: " << totalWritten << std::endl;
+    // std::cerr << "消费者完成，Total Written Read Pairs: " << totalWritten << std::endl;
 }
 
